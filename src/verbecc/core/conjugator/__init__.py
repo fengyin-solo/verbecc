@@ -1,1 +1,3 @@
+from .batch_conjugation_result import BatchConjugationResult as BatchConjugationResult
+from .batch_conjugator import BatchConjugator as BatchConjugator
 from .complete_conjugator import CompleteConjugator as CompleteConjugator
