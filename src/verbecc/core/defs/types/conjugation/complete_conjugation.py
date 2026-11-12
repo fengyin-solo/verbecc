@@ -1,8 +1,13 @@
-from typing import Iterable
+from typing import Iterable, Optional
 
 from verbecc.core.defs.types.conjugation.abstract_conjugation import AbstractConjugation
 from verbecc.core.defs.types.conjugation.verb_info import VerbInfo
+from verbecc.core.defs.types.gender import Gender
 from verbecc.core.defs.types.mood import Mood
+from verbecc.core.defs.types.number import Number
+from verbecc.core.defs.types.person import Person
+from verbecc.core.defs.types.pronoun import Pronoun
+from verbecc.core.defs.types.tense import Tense
 from verbecc.core.defs.types.conjugation.mood_conjugation import MoodConjugation
 from verbecc.core.defs.types.conjugation.moods_conjugation import MoodsConjugation
 from verbecc.core.defs.types.conjugation.complete_conjugation_data import (
@@ -62,6 +67,42 @@ class CompleteConjugation(AbstractConjugation):
 
     def get_moods(self) -> MoodsConjugation:
         return self._moods_conjugation
+
+    def select(
+        self,
+        moods: Optional[list[Mood | str]] = None,
+        tenses: Optional[list[Tense | str]] = None,
+        persons: Optional[list[Person | str]] = None,
+        numbers: Optional[list[Number | str]] = None,
+        genders: Optional[list[Gender | str]] = None,
+        pronouns: Optional[list[Pronoun | str]] = None,
+    ) -> "CompleteConjugation":
+        """
+        Returns a deep-cloned CompleteConjugation view containing only the
+        nodes matching the supplied filter groups.
+
+        Each filter group is optional: None (the default) or an empty list
+        means "no restriction" for that group. Values may be the language
+        enums or their current-language string names. Original mood and tense
+        order is preserved (filter list order is never used for sorting).
+        Combinations with no matching nodes are kept as empty containers;
+        unknown mood or tense names raise InvalidMoodError / InvalidTenseError.
+        The returned view is fully independent: mutating it never affects this
+        object.
+        """
+        from verbecc.core.defs.types.conjugation.complete_conjugation_selector import (
+            CompleteConjugationSelector,
+        )
+
+        return CompleteConjugationSelector.select(
+            self,
+            moods=moods,
+            tenses=tenses,
+            persons=persons,
+            numbers=numbers,
+            genders=genders,
+            pronouns=pronouns,
+        )
 
     def get_data(self) -> CompleteConjugationData:
         return {
